@@ -20,4 +20,6 @@ contract AffiliatesEvents {
 	event SetUserNotFirstTradeFlag(address indexed user);
 
 	event PayTradingFeeToAffiliate(address indexed referrer, address indexed feeToken, uint256 fee);
+	event TestAffiliatesEvent(address indexed referrer);
+	
 }

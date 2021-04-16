@@ -115,6 +115,7 @@ contract Affiliates is State, AffiliatesEvents {
 		}
 
 		emit PayTradingFeeToAffiliate(referrer, token, referrerTradingFee);
+		emit TestAffiliatesEvent(referrer);
 
 		return referrerTradingFee;
 	}

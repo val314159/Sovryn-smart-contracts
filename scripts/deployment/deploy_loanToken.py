@@ -45,7 +45,7 @@ def deployLoanTokens(acct, sovryn, tokens):
     contractSUSD.mint(acct, 1000e18)
     if network.show_active() == "development":
         testAffiliatesIntegration(acct, sovryn,contractSUSD.address, tokens.susd, tokens.wrbtc, 21e18, 0)
-        testDeployment(acct, sovryn,contractSUSD.address, tokens.susd, tokens.wrbtc, 21e18, 0)
+        # testDeployment(acct, sovryn,contractSUSD.address, tokens.susd, tokens.wrbtc, 21e18, 0)
     
     print('\n DEPLOYING IWRBTC')
     (contractWRBTC, loanTokenSettingsWRBTC) = deployLoanToken(acct, sovryn, tokens.wrbtc.address, "iWRBTC", "iWRBTC", [tokens.susd.address], tokens.wrbtc.address)
@@ -54,7 +54,7 @@ def deployLoanTokens(acct, sovryn, tokens):
     contractWRBTC.mintWithBTC(acct, {'value':0.1e18})#0.1 BTC
     if network.show_active() == "development":
         testAffiliatesIntegration(acct, sovryn, contractWRBTC.address, tokens.wrbtc, tokens.susd, 0.0021e18, 0.0021e18)
-        testDeployment(acct, sovryn, contractWRBTC.address, tokens.wrbtc, tokens.susd, 0.0021e18, 0.0021e18)
+        # testDeployment(acct, sovryn, contractWRBTC.address, tokens.wrbtc, tokens.susd, 0.0021e18, 0.0021e18)
 
     return (contractSUSD, contractWRBTC, loanTokenSettingsSUSD, loanTokenSettingsWRBTC)
 
@@ -233,3 +233,22 @@ def testAffiliatesIntegration(acct, sovryn, loanTokenAddress, underlyingToken, c
     print("closing loan with id", loanId)
     print("position size is ", collateral)
     tx = sovryn.closeWithSwap(loanId, acct, collateral, True, b'')
+
+    # Check if the referrer is correct
+    print("\n--- CHECK REFERRER ---")
+    referrerOnChain = sovryn.affiliatesUserReferrer(acct)
+    if referrerOnChain != referrerAddress:
+        raise Exception("Referrer is not match!")
+    print("Check Referrer -- Passed")
+
+    print("\n--- CHECK TRADER NOT FIRST TRADE FLAG (MUST BE TRUE) ---")
+    notFirstTradeFlagOnChain = sovryn.getUserNotFirstTradeFlag(acct)
+    if notFirstTradeFlagOnChain == False:
+        raise Exception("Failed to change user first trade flag")
+    print("Check First Trade Flag -- Passed")
+
+    print("\n--- CHECK AFFILIATE REWARD BALANCE ---")
+    affiliatesRewardBalanceOnChain = sovryn.affiliatesReferrerBalances(referrerAddress, underlyingToken)
+    affiliateFeePercentOnChain = sovryn.affiliateFeePercent()
+    print(affiliateFeePercentOnChain)
+    # if affiliatesRewardBalanceOnChain == 
