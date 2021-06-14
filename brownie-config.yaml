@@ -43,7 +43,7 @@ compiler:
     remappings: null
 
 console:
-  show_colors: true
+  show_colors: false
   color_style: monokai
   auto_suggest: true
   completions: true
